@@ -135,6 +135,45 @@ export default class CPT {
 
         return predictions;
     }
+
+    predict_k(target: any[], 
+        k: number = target.length,
+    ): any[][] {
+       
+        let similarSequencesList = []
+
+       for(let eachTarget of target) {
+           eachTarget = eachTarget.slice(-k);
+           let eachTargetSet = new Set(eachTarget);
+           let intersection = new Set([...Array(this.data.length).keys()])
+
+           for(let element of eachTarget) {
+               if(!this.II[element]) continue;
+               intersection = intersect(intersection, this.II[element]);
+           }
+
+           let similarSequences = [];
+
+           for(let element of intersection) {
+               let currNode = this.LT[element];
+               let tmp = [];
+               while (currNode.item !== null) {
+                   tmp.push(currNode.item);
+                   currNode = currNode.parent;
+               }
+               similarSequences.push(tmp);
+           }
+
+           similarSequences = similarSequences.map(s => s.reverse());
+           let newSimilarSequences = [];
+           for (let i of similarSequences){
+                newSimilarSequences.push(i.join(" "))
+           }
+           similarSequencesList.push(newSimilarSequences);
+       }
+
+       return similarSequencesList;
+   }
 }
 
 /**
